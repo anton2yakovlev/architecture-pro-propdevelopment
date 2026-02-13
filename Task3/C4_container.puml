@@ -1,0 +1,66 @@
+@startuml C4_Container
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_TOP_DOWN()
+
+title Диаграмма контейнеров PropDevelopment
+
+Person(client, "Клиент", "Покупатель недвижимости")
+Person(tenant, "Собственник", "Владелец недвижимости")
+Person(manager, "Менеджер", "Работает с клиентами")
+
+System_Boundary(propdev, "PropDevelopment") {
+    Container(web_storefront, "Витрина продаж", "React", "Подбор и бронирование недвижимости")
+    Container(mobile_app, "Мобильное приложение", "iOS, Android", "Услуги ЖКХ и Умный дом для собственников")
+    
+    Container(auth_service, "auth-service", "Keycloak", "Аутентификация пользователей")
+    
+    Container(client_mart, "client-mart-app", "Spring Boot", "Продажа недвижимости, сделки")
+    Container(client_estate, "client-estate-app", "Spring Boot", "Управление объектами недвижимости")
+    Container(client_crm, "client-crm-app", "Spring Boot", "CRM клиентов")
+    
+    Container(tenant_core, "tenant-core-app", "Spring Boot", "Услуги ЖКХ для собственников")
+    Container(tenant_crm, "tenant-crm", "Spring Boot", "CRM собственников")
+    
+    Container(smart_home_service, "smart-home-service", "Spring Boot", "Управление устройствами Умный дом")
+    
+    ContainerDb(client_db, "client-mart-db", "PostgreSQL", "Данные по сделкам")
+    ContainerDb(estate_db, "estate-db", "PostgreSQL", "Объекты недвижимости")
+    ContainerDb(tenant_db, "tenant-core-db", "PostgreSQL", "Данные ЖКХ")
+    ContainerDb(smart_home_db, "smart-home-db", "PostgreSQL", "Устройства и настройки доступа")
+    
+    Container(dwh, "DWH", "Greenplum", "Хранилище данных")
+}
+
+System_Ext(smart_home_partner, "Система Умный дом", "Интеллектуальный домофон и шлагбаум")
+System_Ext(payment, "Платёжная система", "Онлайн-платежи")
+System_Ext(utility, "Поставщик ЖКХ", "Услуги ЖКХ")
+
+Rel(client, web_storefront, "Просматривает объекты", "HTTPS")
+Rel(tenant, mobile_app, "Управляет ЖКХ и Умным домом", "HTTPS")
+Rel(manager, client_crm, "Работает с клиентами", "HTTPS")
+
+Rel(web_storefront, auth_service, "Аутентификация", "REST")
+Rel(mobile_app, auth_service, "Аутентификация", "REST")
+
+Rel(web_storefront, client_mart, "Бронирование", "REST")
+Rel(web_storefront, client_estate, "Каталог объектов", "REST")
+
+Rel(mobile_app, tenant_core, "Управление ЖКХ", "REST")
+Rel(mobile_app, smart_home_service, "Управление домофоном и шлагбаумом", "REST/WS")
+
+Rel(client_mart, client_db, "Читает/пишет", "JDBC")
+Rel(client_estate, estate_db, "Читает/пишет", "JDBC")
+Rel(tenant_core, tenant_db, "Читает/пишет", "JDBC")
+Rel(smart_home_service, smart_home_db, "Читает/пишет", "JDBC")
+
+Rel(smart_home_service, smart_home_partner, "Команды управления, события", "REST/WebSocket")
+
+Rel(tenant_core, payment, "Оплата ЖКХ", "REST")
+Rel(tenant_core, utility, "Данные по ЖКХ", "REST")
+
+Rel(client_db, dwh, "Репликация", "CDC")
+Rel(tenant_db, dwh, "Репликация", "CDC")
+Rel(smart_home_db, dwh, "Репликация", "CDC")
+
+@enduml
