@@ -1,0 +1,28 @@
+@startuml C4_Context
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+LAYOUT_WITH_LEGEND()
+
+title Контекстная диаграмма системы PropDevelopment
+
+Person(client, "Клиент", "Покупатель недвижимости")
+Person(tenant, "Собственник", "Владелец недвижимости, жилец")
+Person(manager, "Менеджер", "Работает с клиентами и объектами недвижимости")
+
+System(propdev, "PropDevelopment", "Платформа управления недвижимостью: продажа объектов, управление ЖКУ, CRM")
+
+System_Ext(smart_home, "Система Умный дом", "Партнёрская система: интеллектуальный домофон с биометрией, интеллектуальный шлагбаум с распознаванием номеров")
+System_Ext(payment, "Платёжная система", "Провайдер онлайн-платежей")
+System_Ext(utility, "Поставщик ресурсов ЖКХ", "Предоставление услуг ЖКХ")
+System_Ext(gov, "Государственные органы", "Регистрационные действия с недвижимостью")
+
+Rel(client, propdev, "Подбирает и бронирует объекты недвижимости", "HTTPS")
+Rel(tenant, propdev, "Управляет услугами ЖКХ, использует Умный дом", "Mobile App")
+Rel(manager, propdev, "Администрирует сделки, работает с клиентами", "HTTPS")
+
+Rel(propdev, smart_home, "Управление домофоном и шлагбаумом, получение событий", "REST/WebSocket")
+Rel(propdev, payment, "Проведение платежей", "REST")
+Rel(propdev, utility, "Получение данных по ЖКУ", "REST")
+Rel(propdev, gov, "Регистрация сделок", "СМЭВ/SOAP")
+
+@enduml

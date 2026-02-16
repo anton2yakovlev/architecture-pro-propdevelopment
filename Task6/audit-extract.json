@@ -1,0 +1,52 @@
+[
+  {
+    "auditID": "test-1",
+    "verb": "get",
+    "objectRef": {
+      "resource": "secrets",
+      "name": "test-secret"
+    }
+  },
+  {
+    "auditID": "test-2",
+    "verb": "create",
+    "objectRef": {
+      "resource": "pods",
+      "subresource": "exec"
+    }
+  },
+  {
+    "auditID": "test-3",
+    "verb": "create",
+    "objectRef": {
+      "resource": "pods"
+    },
+    "requestObject": {
+      "spec": {
+        "containers": [
+          {
+            "securityContext": {
+              "privileged": true
+            }
+          }
+        ]
+      }
+    }
+  },
+  {
+    "auditID": "test-4",
+    "verb": "create",
+    "objectRef": {
+      "resource": "rolebindings",
+      "name": "test-binding"
+    }
+  },
+  {
+    "auditID": "test-5",
+    "verb": "delete",
+    "objectRef": {
+      "resource": "audit-policy",
+      "name": "audit-policy"
+    }
+  }
+]
